@@ -9,7 +9,7 @@ export default function BookingCard({ booking }) {
   const router = useRouter();
 
   const handleDelete = async (id) => {
-    if (!confirm("আপনি কি নিশ্চিত যে এই অ্যাপয়েন্টমেন্টটি ডিলিট করতে চান?")) return;
+    if (!confirm("Are you sure you want to delete this appointment?")) return;
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${id}`, {
@@ -18,8 +18,8 @@ export default function BookingCard({ booking }) {
       const data = await res.json();
       
       if (data.success) {
-        alert("ডিলিট সফল হয়েছে!");
-        router.refresh(); // পেজটি রিফ্রেশ করে নতুন ডাটা দেখাবে
+        alert("Appointment deleted successfully!");
+        router.refresh(); // Refresh the page to show the updated list
       }
     } catch (error) {
       console.error("Error deleting:", error);

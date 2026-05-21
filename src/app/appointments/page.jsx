@@ -11,7 +11,7 @@ export default function AllAppointments() {
     fetch("https://doctor-app-server.vercel.app/doctors")
       .then((res) => res.json())
       .then((data) => {
-        // ডাটা চেক করা হচ্ছে
+        
         if (data && data.success) {
           setDoctors(data.data);
         }
@@ -19,13 +19,13 @@ export default function AllAppointments() {
       .catch((err) => console.error("Error fetching doctors:", err));
   }, []);
 
-  // ডাটা ফিল্টারিং এবং সর্টিং
+  
   const filteredDoctors = [...doctors]
     .filter((doc) => 
       doc.name && doc.name.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
-      // রেটিং বের করার সময় ডাটা ফরম্যাট নিশ্চিত করা
+    
       const ratingA = parseFloat(a.rating) || 0;
       const ratingB = parseFloat(b.rating) || 0;
 

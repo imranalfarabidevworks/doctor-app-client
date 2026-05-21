@@ -95,7 +95,7 @@ export default function Footer() {
         <div className="mt-12 pt-6 border-t border-slate-800/60 flex flex-col sm:flex-row justify-between items-center gap-3 text-sm text-slate-500">
           <p>© {new Date().getFullYear()} DocAppoint. All rights reserved.</p>
           <p className="flex items-center gap-1">
-            Built with <span className="text-red-500">❤️</span> for better healthcare
+            developed <span className="text-red-500"></span> by Imran Al Farabi
           </p>
         </div>
       </div>

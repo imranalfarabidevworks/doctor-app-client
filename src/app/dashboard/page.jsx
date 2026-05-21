@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }) {
 
   useEffect(() => {
     if (!isPending && !session) {
-      router.push("/login"); // লগইন না থাকলে পাঠিয়ে দাও
+      router.push("/login"); 
     }
   }, [session, isPending, router]);
 

@@ -10,7 +10,7 @@ const stats = [
 export default function StatsSection() {
   return (
     <section className="relative bg-slate-950 py-16 px-4 sm:px-6 lg:px-8 border-b border-slate-900 overflow-hidden">
-      {/* ব্যাকগ্রাউন্ড হালকা নিয়ন গ্লো এফেক্ট */}
+    
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[150px] bg-blue-600/5 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">
