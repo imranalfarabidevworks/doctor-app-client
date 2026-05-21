@@ -3,7 +3,7 @@ import TopDoctors from "./components/TopDoctors";
 import StatsSection from "./components/StatsSection";
 import WhyChooseUs from "./components/WhyChooseUs";
 export default async function Home() {
-  const res = await fetch("http://localhost:5000/doctors");
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/doctors`);
 const data = await res.json();
 
 const doctors = data.data;

@@ -8,7 +8,7 @@ export default function AllAppointments() {
   const [sortOrder, setSortOrder] = useState("default");
 
   useEffect(() => {
-    fetch("http://localhost:5000/doctors")
+    fetch("https://doctor-app-server.vercel.app/doctors")
       .then((res) => res.json())
       .then((data) => {
         // ডাটা চেক করা হচ্ছে
