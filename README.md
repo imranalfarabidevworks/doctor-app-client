@@ -27,7 +27,3 @@ This project is powered by modern web technologies:
 
 ## 💻 Getting Started
 Follow these steps to run the project locally on your machine:
-
-1. **Clone the repository:**
-   ```bash
-   git clone [your-repository-url]
