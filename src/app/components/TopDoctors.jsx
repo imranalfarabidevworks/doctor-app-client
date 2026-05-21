@@ -1,7 +1,7 @@
 import DoctorsCard from "@/app/components/DoctorsCard";
 
 const TopDoctors = async () => {
-  const res = await fetch("http://localhost:5000/doctors", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/doctors`, {
     cache: "no-store",
   });
 

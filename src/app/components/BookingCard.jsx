@@ -12,7 +12,7 @@ export default function BookingCard({ booking }) {
     if (!confirm("আপনি কি নিশ্চিত যে এই অ্যাপয়েন্টমেন্টটি ডিলিট করতে চান?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/appointments/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${id}`, {
         method: "DELETE",
       });
       const data = await res.json();

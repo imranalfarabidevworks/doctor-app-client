@@ -7,7 +7,7 @@ import Image from "next/image";
 export default async function DoctorDetails({ params }) {
   const { id } = await params; // Next.js 15+ fix
 
-  const res = await fetch(`http://localhost:5000/doctors/${id}`, { cache: "no-store" });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/doctors/${id}`, { cache: "no-store" });
   const data = await res.json();
 
   if (!data.success) return <div className="text-center py-20 text-white">Doctor not found</div>;
