@@ -11,14 +11,13 @@ export default function DeleteButton({ id }) {
     if (!confirm) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/appointments/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${id}`, {
         method: "DELETE",
       });
       const data = await res.json();
-
       if (data.success) {
         toast.success("Booking deleted!");
-        router.refresh(); // page reload না করে data refresh
+        router.refresh();
       } else {
         toast.error("Failed to delete!");
       }
