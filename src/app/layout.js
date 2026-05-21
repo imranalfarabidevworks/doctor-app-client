@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,28 +14,33 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// 🌟 এসাইনমেন্টের রিকোয়ারমেন্ট অনুযায়ী মিনিংফুল মেটাডাটা
+// Metadata
 export const metadata = {
   title: "DocAppoint | Premium Doctor Appointment Manager",
-  description: "Book doctor appointments instantly with verified medical specialists. Manage your health with confidence.",
+  description:
+    "Book doctor appointments instantly with verified medical specialists. Manage your health with confidence.",
 };
 
 export default function RootLayout({ children }) {
   return (
-    // 💡 পুরো সাইট যেন ডার্ক থিম পায় সেজন্য 'dark' ক্লাস অ্যাড করতে পারেন
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <body className="min-h-full bg-slate-950 text-slate-100 flex flex-col">
-        {/* ন্যাভবার সবসময় সবার উপরে থাকবে */}
+
+        {/* Navbar */}
         <Navbar />
-        
-        {/* মেইন কন্টেন্ট এরিয়া */}
+
+        {/* Main Content */}
         <main className="flex-grow">{children}</main>
-        
-        {/* ফুটার সবসময় সবার নিচে থাকবে */}
-        <Footer />  
+
+        {/* 🔥 TOAST (IMPORTANT - FIXED) */}
+        <Toaster position="top-right" />
+
+        {/* Footer */}
+        <Footer />
+
       </body>
     </html>
   );

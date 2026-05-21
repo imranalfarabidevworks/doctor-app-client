@@ -2,23 +2,30 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Button } from "@heroui/react";
+import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { FiMenu, FiX, FiLogOut } from "react-icons/fi";
 import { FaStethoscope } from "react-icons/fa";
+import { authClient } from "@/lib/auth-client"; // আপনার অথ ক্লায়েন্ট পাথ
 
 const Navbar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [user, setUser] = useState(null); // আপনার Auth স্টেট (Firebase/Context) এখানে কানেক্ট হবে
+
+  // Better Auth এর সেশন হুক ব্যবহার
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
 
   const handleLogout = async () => {
     try {
-      setUser(null);
+      await authClient.signOut();
       toast.success("Logged out successfully!");
-    } catch {
+      setDropdownOpen(false);
+      router.push("/");
+      router.refresh();
+    } catch (err) {
       toast.error("Logout failed!");
     }
   };
@@ -26,9 +33,8 @@ const Navbar = () => {
   const navLinks = [
     { href: "/", label: "Home" },
     { href: "/appointments", label: "All Appointments" },
+    { href: "/dashboard", label: "Dashboard" }
   ];
-
-  const activeLinks = user ? [...navLinks, { href: "/dashboard", label: "Dashboard" }] : navLinks;
 
   const isActive = (href) => {
     if (href === "/") return pathname === "/";
@@ -40,7 +46,6 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div className="flex items-center justify-between h-16 w-full">
           
-          {/* বাম পাশ: লোগো এরিয়া */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center gap-2">
               <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center shadow-md shadow-blue-600/20">
@@ -52,33 +57,28 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* মাঝখান: ডেক্সটপ নেভিগেশন লিঙ্কস */}
           <div className="hidden md:flex items-center gap-2 mx-auto">
-            {activeLinks.map((link) => {
-              const currentActive = isActive(link.href);
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
-                    currentActive
-                      ? "bg-blue-950/60 text-blue-400 border border-blue-900/40"
-                      : "text-slate-300 hover:text-blue-400 hover:bg-slate-900/60"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive(link.href)
+                    ? "bg-blue-950/60 text-blue-400 border border-blue-900/40"
+                    : "text-slate-300 hover:text-blue-400 hover:bg-slate-900/60"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
           </div>
 
-          {/* ডান পাশ: ইউজার প্রোফাইল অথবা লগইন/রেজিস্টার বাটনস */}
           <div className="hidden md:flex items-center gap-4">
             {user ? (
               <div className="relative">
                 <button onClick={() => setDropdownOpen(!dropdownOpen)} className="focus:outline-none">
                   <img
-                    src={user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || "User"}&background=2563eb&color=fff`}
+                    src={user.image || `https://ui-avatars.com/api/?name=${user.name || "User"}&background=2563eb&color=fff`}
                     alt="avatar"
                     className="w-9 h-9 rounded-full border-2 border-blue-500 object-cover cursor-pointer hover:ring-2 hover:ring-blue-300 transition-all"
                   />
@@ -86,7 +86,7 @@ const Navbar = () => {
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-52 bg-slate-900 rounded-2xl shadow-xl border border-slate-800 py-2 z-50">
                     <div className="px-4 py-2 border-b border-slate-800">
-                      <p className="font-semibold text-sm text-white truncate">{user.displayName || "User"}</p>
+                      <p className="font-semibold text-sm text-white truncate">{user.name}</p>
                       <p className="text-xs text-slate-400 truncate">{user.email}</p>
                     </div>
                     <button onClick={handleLogout} className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-400 hover:bg-red-950/20 text-left transition-colors">
@@ -97,72 +97,32 @@ const Navbar = () => {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                {/* 🌟 ফিক্সড পিওর Next.js Link লগইন বাটন */}
-                <Link 
-                  href="/login" 
-                  className="inline-flex items-center justify-center text-sm font-medium text-white bg-transparent border border-slate-800 hover:bg-slate-900/80 h-9 px-4 rounded-xl transition-all duration-200"
-                >
-                  Login
-                </Link>
-                
-                <Link 
-                  href="/register" 
-                  className="inline-flex items-center justify-center text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 h-9 px-4 rounded-xl shadow-lg shadow-blue-500/20 transition-all duration-200"
-                >
-                  Register
-                </Link>
+                <Link href="/login" className="text-sm font-medium text-white bg-transparent border border-slate-800 hover:bg-slate-900/80 h-9 px-4 rounded-xl flex items-center">Login</Link>
+                <Link href="/register" className="text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 h-9 px-4 rounded-xl flex items-center shadow-lg shadow-blue-500/20">Register</Link>
               </div>
             )}
           </div>
 
-          {/* মোবাইল মেনু বাটন */}
-          <div className="flex items-center md:hidden gap-2">
-            <button
-              className="p-2 rounded-lg text-slate-400 hover:bg-slate-900 transition-colors"
-              onClick={() => setMenuOpen(!menuOpen)}
-            >
-              {menuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+          <div className="md:hidden">
+            <button className="text-slate-400" onClick={() => setMenuOpen(!menuOpen)}>
+              {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
             </button>
           </div>
-
         </div>
       </div>
 
-      {/* মোবাইল রেসপন্সিভ ড্রপডাউন মেনু */}
+      {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden py-4 border-t border-slate-900 space-y-3 bg-slate-950 px-4 transition-all duration-300">
-          <div className="space-y-1">
-            {activeLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMenuOpen(false)}
-                className={`block px-4 py-2.5 rounded-lg text-sm font-medium ${
-                  isActive(link.href) ? "bg-blue-950/50 text-blue-400" : "text-slate-300"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
-          
+        <div className="md:hidden bg-slate-950 border-b border-slate-900 p-4 space-y-2">
+          {navLinks.map((link) => (
+            <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)} className="block px-4 py-2 text-slate-300 hover:text-blue-400">
+              {link.label}
+            </Link>
+          ))}
           {!user && (
-            <div className="flex flex-col gap-2 pt-3 border-t border-slate-900">
-              {/* 🌟 মোবাইল ভিউতেও পিওর Link দিয়ে ফিক্স করা হয়েছে */}
-              <Link 
-                href="/login" 
-                className="w-full flex items-center justify-center text-sm font-medium text-white bg-transparent border border-slate-800 h-10 rounded-xl hover:bg-slate-900/80 transition-all"
-                onClick={() => setMenuOpen(false)}
-              >
-                Login
-              </Link>
-              <Link 
-                href="/register" 
-                className="w-full flex items-center justify-center text-sm font-medium text-white bg-blue-600 h-10 rounded-xl hover:bg-blue-500 transition-all"
-                onClick={() => setMenuOpen(false)}
-              >
-                Register
-              </Link>
+            <div className="flex flex-col gap-2 pt-2">
+              <Link href="/login" onClick={() => setMenuOpen(false)} className="px-4 py-2 text-center border border-slate-800 rounded-xl">Login</Link>
+              <Link href="/register" onClick={() => setMenuOpen(false)} className="px-4 py-2 text-center bg-blue-600 rounded-xl">Register</Link>
             </div>
           )}
         </div>

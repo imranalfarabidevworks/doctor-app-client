@@ -3,16 +3,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { toast } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client"; // তোমার অথ ক্লায়েন্ট
+import { useRouter, useSearchParams } from "next/navigation";
+import { authClient } from "@/lib/auth-client"; 
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
 export default function Login() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // 'from' প্যারামিটার চেক করা (প্রাইভেট রুটে যাওয়ার চেষ্টা করলে)
+  const from = searchParams.get("from") || "/dashboard";
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,7 +33,20 @@ export default function Login() {
       toast.error(error.message || "Invalid email or password!");
     } else {
       toast.success("Login successful!");
-      router.push("/dashboard"); // লগইনের পর ড্যাশবোর্ডে পাঠাবে
+      router.push(from); // রিকোয়ারমেন্ট অনুযায়ী ডাইনামিক রিডাইরেক্ট
+      router.refresh();  // Navbar আপডেট করার জন্য
+    }
+  };
+
+  const handleSocialLogin = async (provider) => {
+    try {
+      await authClient.signIn.social({ 
+        provider,
+        callbackURL: "/" // সোশ্যাল লগইনের পর রিকোয়ারমেন্ট অনুযায়ী হোম পেজে পাঠাবে
+      });
+      router.refresh();
+    } catch (err) {
+      toast.error(`Failed to login with ${provider}`);
     }
   };
 
@@ -42,14 +59,14 @@ export default function Login() {
           <input 
             type="email" 
             placeholder="Email" 
-            className="w-full bg-slate-950 text-white p-3.5 rounded-xl border border-slate-800 focus:border-blue-500 outline-none" 
+            className="w-full bg-slate-950 text-white p-3.5 rounded-xl border border-slate-800 focus:border-blue-500 outline-none transition-all" 
             onChange={(e) => setEmail(e.target.value)} 
             required 
           />
           <input 
             type="password" 
             placeholder="Password" 
-            className="w-full bg-slate-950 text-white p-3.5 rounded-xl border border-slate-800 focus:border-blue-500 outline-none" 
+            className="w-full bg-slate-950 text-white p-3.5 rounded-xl border border-slate-800 focus:border-blue-500 outline-none transition-all" 
             onChange={(e) => setPassword(e.target.value)} 
             required 
           />
@@ -65,13 +82,13 @@ export default function Login() {
         
         <div className="my-6 space-y-3">
            <button 
-             onClick={() => authClient.signIn.social({ provider: "google" })}
+             onClick={() => handleSocialLogin("google")}
              className="w-full flex items-center justify-center gap-2 bg-white text-black font-semibold h-12 rounded-xl hover:bg-slate-100 transition-all"
            >
              <FcGoogle size={20} /> Login with Google
            </button>
            <button 
-             onClick={() => authClient.signIn.social({ provider: "github" })}
+             onClick={() => handleSocialLogin("github")}
              className="w-full flex items-center justify-center gap-2 bg-slate-800 text-white font-semibold h-12 rounded-xl hover:bg-slate-700 transition-all"
            >
              <FaGithub size={20} /> Login with GitHub
