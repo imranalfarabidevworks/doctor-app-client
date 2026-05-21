@@ -5,25 +5,39 @@ import EditModal from "@/app/components/EditModal";
 
 export default async function MyBookings() {
   let bookings = [];
+  let error = null;
 
   try {
     const session = await auth.api.getSession({
-      headers: await headers(),
+      headers: await headers(),  // ✅ better-auth এর জন্য এটাই সঠিক
     });
-    const user = session?.user;
 
-    if (user?.email) {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${user.email}`, {
+    console.log("SESSION DATA:", JSON.stringify(session)); // Vercel log এ দেখুন
+
+    const email = session?.user?.email;
+console.log("USER EMAIL FROM SESSION:", email);
+
+    if (email) {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      console.log("FETCHING:", `${apiUrl}/appointments/${email}`);
+
+      const res = await fetch(`${apiUrl}/appointments/${email}`, {
         cache: "no-store",
       });
+
+      console.log("RESPONSE STATUS:", res.status);
 
       if (res.ok) {
         const data = await res.json();
         bookings = data.data || [];
+        console.log("BOOKINGS COUNT:", bookings.length);
       }
+    } else {
+      console.log("NO EMAIL FOUND - session:", session);
     }
-  } catch (error) {
-    console.error("Failed to fetch bookings:", error);
+  } catch (err) {
+    console.error("Failed to fetch bookings:", err);
+    error = err.message;
   }
 
   return (
@@ -32,6 +46,7 @@ export default async function MyBookings() {
       {bookings.length === 0 ? (
         <div className="text-center py-10">
           <p className="text-slate-400 text-lg">You have no bookings yet.</p>
+          {error && <p className="text-red-400 text-sm mt-2">Error: {error}</p>}
         </div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
