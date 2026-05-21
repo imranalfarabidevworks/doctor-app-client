@@ -4,16 +4,27 @@ import DeleteButton from "@/app/components/DeleteButton";
 import EditModal from "@/app/components/EditModal";
 
 export default async function MyBookings() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-  const user = session?.user;
+  let bookings = [];
 
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${user?.email}`, {
-    cache: "no-store",
-  });
-  const data = await res.json();
-  const bookings = data.data;
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    const user = session?.user;
+
+    if (user?.email) {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments/${user.email}`, {
+        cache: "no-store",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        bookings = data.data || [];
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch bookings:", error);
+  }
 
   return (
     <div>
