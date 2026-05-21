@@ -49,7 +49,7 @@ export default function AllAppointments() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <select 
+            {/* <select 
               className="p-4 rounded-xl bg-slate-900 border border-slate-700 outline-none cursor-pointer"
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value)}
@@ -57,7 +57,7 @@ export default function AllAppointments() {
               <option value="default">Default Order</option>
               <option value="high-low">Rating: High to Low</option>
               <option value="low-high">Rating: Low to High</option>
-            </select>
+            </select> */}
           </div>
         </div>
 

@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { Button, Input, Label, Modal, Surface, TextField } from "@heroui/react";
+import {
+  Button, Input, Label, Modal, Surface, TextField,
+} from "@heroui/react";
 
-// Props এ user কে রিসিভ করুন
-export default function AppointmentModal({ doctorName, user }) {
+export default function AppointmentModal({ doctorName }) {
   const [loading, setLoading] = useState(false);
 
   const handleAppointment = async (e) => {
@@ -15,10 +16,7 @@ export default function AppointmentModal({ doctorName, user }) {
     const formData = new FormData(e.target);
     const appointmentData = Object.fromEntries(formData.entries());
 
-    // সেশন থেকে আসা ইমেইলটি এখানে সেট করুন
-    appointmentData.userEmail = user?.email;
-
-    console.log("Submitting Data:", appointmentData);
+    console.log("Appointment Data:", appointmentData);
 
     try {
       const res = await fetch("http://localhost:5000/appointments", {
@@ -36,7 +34,7 @@ export default function AppointmentModal({ doctorName, user }) {
         toast.error("Failed to book appointment!");
       }
     } catch (error) {
-      console.error(error);
+      console.log(error);
       toast.error("Server error! Try again.");
     } finally {
       setLoading(false);
@@ -57,13 +55,13 @@ export default function AppointmentModal({ doctorName, user }) {
             <Modal.CloseTrigger />
             <Modal.Header>
               <Modal.Heading>Appointment Booking</Modal.Heading>
+              <p className="text-sm text-gray-500 mt-2">Fill the form to confirm appointment</p>
             </Modal.Header>
 
             <Modal.Body>
               <Surface variant="default">
                 <form onSubmit={handleAppointment} className="flex flex-col gap-4 p-2">
-                  
-                  {/* DOCTOR NAME (Hidden) */}
+
                   <input type="hidden" name="doctorName" value={doctorName} />
 
                   <TextField className="w-full">
@@ -71,8 +69,16 @@ export default function AppointmentModal({ doctorName, user }) {
                     <Input value={doctorName} readOnly />
                   </TextField>
 
-                  {/* ইমেইল ফিল্ডটি এখান থেকে সরিয়ে দেওয়া হয়েছে কারণ এটি সেশন থেকে আসবে */}
-                  
+                  <TextField className="w-full">
+                    <Label>Your Email</Label>
+                    <Input
+                      name="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </TextField>
+
                   <TextField className="w-full">
                     <Label>Patient Name</Label>
                     <Input name="patientName" placeholder="Enter patient name" required />
@@ -105,6 +111,7 @@ export default function AppointmentModal({ doctorName, user }) {
                   <Button type="submit" disabled={loading}>
                     {loading ? "Booking..." : "Confirm Appointment"}
                   </Button>
+
                 </form>
               </Surface>
             </Modal.Body>
