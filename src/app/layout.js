@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
         {/* Main Content */}
         <main className="flex-grow">{children}</main>
 
-        {/* 🔥 TOAST (IMPORTANT - FIXED) */}
+        {/*  TOAST  */}
         <Toaster position="top-right" />
 
         {/* Footer */}

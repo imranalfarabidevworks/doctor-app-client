@@ -3,7 +3,7 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { Button, Input, Label, Modal, Surface, TextField } from "@heroui/react";
 
-export default function AppointmentModal({ doctorName }) {
+export default function AppointmentModal({ doctorName, userEmail }) { // ✅ userEmail props
   const [loading, setLoading] = useState(false);
 
   const handleAppointment = async (e) => {
@@ -13,7 +13,7 @@ export default function AppointmentModal({ doctorName }) {
     const form = e.target;
     const appointmentData = {
       doctorName: doctorName,
-      email: form.email.value,
+      email: userEmail, // ✅ session থেকে আসা email, form input না
       patientName: form.patientName.value,
       gender: form.gender.value,
       phone: form.phone.value,
@@ -63,10 +63,13 @@ export default function AppointmentModal({ doctorName }) {
                     <Label>Doctor Name</Label>
                     <Input value={doctorName} readOnly />
                   </TextField>
+
+                  {/* ✅ Email দেখাবে কিন্তু change করা যাবে না */}
                   <TextField className="w-full">
                     <Label>Your Email</Label>
-                    <Input name="email" type="email" placeholder="Enter your email" required />
+                    <Input value={userEmail || ""} readOnly className="opacity-60 cursor-not-allowed" />
                   </TextField>
+
                   <TextField className="w-full">
                     <Label>Patient Name</Label>
                     <Input name="patientName" placeholder="Enter patient name" required />
@@ -91,7 +94,7 @@ export default function AppointmentModal({ doctorName }) {
                     <Label>Time</Label>
                     <Input name="appointmentTime" type="time" required />
                   </TextField>
-                  <Button type="submit" disabled={loading}>
+                  <Button type="submit" disabled={loading || !userEmail}>
                     {loading ? "Booking..." : "Confirm Appointment"}
                   </Button>
                 </form>

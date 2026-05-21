@@ -12,9 +12,9 @@ export default async function MyBookings() {
       headers: await headers(),
     });
 
-    // ✅ better-auth এ user email এভাবে আসে
+    // ✅ better-auth এ user email
     userEmail = session?.user?.email;
-    console.log("User email:", userEmail); // terminal এ দেখুন
+    console.log("User email:", userEmail); // terminal
 
     if (userEmail) {
       const res = await fetch(
@@ -25,7 +25,7 @@ export default async function MyBookings() {
       if (res.ok) {
         const data = await res.json();
         bookings = data.data || [];
-        console.log("Bookings fetched:", bookings.length); // terminal এ দেখুন
+        console.log("Bookings fetched:", bookings.length); // terminal
       } else {
         console.error("Fetch failed with status:", res.status);
       }
@@ -40,7 +40,7 @@ export default async function MyBookings() {
     <div className="max-w-6xl mx-auto px-4">
       <h1 className="text-3xl font-bold mb-8 mt-20 text-center">My Bookings</h1>
 
-      {/* ✅ Debug info (development এ দেখাবে) */}
+      {/*Debug info */}
       {process.env.NODE_ENV === "development" && (
         <p className="text-center text-xs text-slate-400 mb-4">
           Email: {userEmail || "Not found"} | Bookings: {bookings.length}
