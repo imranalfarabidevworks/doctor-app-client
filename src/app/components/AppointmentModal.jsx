@@ -9,8 +9,17 @@ export default function AppointmentModal({ doctorName }) {
   const handleAppointment = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const formData = new FormData(e.target);
-    const appointmentData = Object.fromEntries(formData.entries());
+
+    const form = e.target;
+    const appointmentData = {
+      doctorName: doctorName,
+      email: form.email.value,
+      patientName: form.patientName.value,
+      gender: form.gender.value,
+      phone: form.phone.value,
+      appointmentDate: form.appointmentDate.value,
+      appointmentTime: form.appointmentTime.value,
+    };
 
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/appointments`, {
@@ -50,7 +59,6 @@ export default function AppointmentModal({ doctorName }) {
             <Modal.Body>
               <Surface variant="default">
                 <form onSubmit={handleAppointment} className="flex flex-col gap-4 p-2">
-                  <input type="hidden" name="doctorName" value={doctorName} />
                   <TextField className="w-full">
                     <Label>Doctor Name</Label>
                     <Input value={doctorName} readOnly />
